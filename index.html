@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>GP4_TO_V1 – Chat IA</title>
+    <style>
+        body {
+            background: #0a1a3d;
+            margin: 0;
+            padding: 0;
+            font-family: Arial;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chatbox {
+            width: 90%;
+            max-width: 600px;
+            background: #102654;
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        #messages {
+            height: 300px;
+            overflow-y: auto;
+            background: #081633;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bubble {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .me {
+            background: #0066ff;
+            margin-left: auto;
+        }
+
+        .bot {
+            background: #222941;
+            margin-right: auto;
+        }
+
+        #input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+        }
+
+        #send {
+            background: #00aaff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-left: 5px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="chatbox">
+        <h2 style="text-align:center;">GP4_TO_V1 – IA</h2>
+
+        <div id="messages"></div>
+
+        <input type="text" id="input" placeholder="Écris ici…">
+        <button id="send">Envoyer</button>
+    </div>
+</div>
+
+<script>
+document.getElementById("send").onclick = async () => {
+    const text = document.getElementById("input").value;
+    if (!text) return;
+
+    // afficher ton message
+    addMessage(text, "me");
+    document.getElementById("input").value = "";
+
+    // envoyer au serveur
+    const response = await fetch("http://localhost:3000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+    });
+
+    const data = await response.json();
+
+    // afficher la réponse de ton IA
+    addMessage(data.reply, "bot");
+};
+
+function addMessage(text, who) {
+    const box = document.getElementById("messages");
+    const bubble = document.createElement("div");
+    bubble.className = "bubble " + who;
+    bubble.innerText = text;
+    box.appendChild(bubble);
+    box.scrollTop = box.scrollHeight;
+}
+</script>
+</body>
+</html>
